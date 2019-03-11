@@ -4,10 +4,10 @@ import Person from "./Person/Person";
 //extends PureComponent ,get shouldComponentUpdate and check all props changed
 
 class Persons extends Component {
-  shouldComponentUpdate(nextProps, nextState) {
-    console.log("[Persons.js] shouldComponentUpdate");
-    return nextProps.personsArray !== this.props.personsArray;
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   console.log("[Persons.js] shouldComponentUpdate");
+  //   return nextProps.personsArray !== this.props.personsArray;
+  // }
   getSnapshotBeforeUpdate(prevProps, prevState) {
     console.log("[Persons.js] getSnapshotBeforeUpdate");
     return { message: "Snapshot!" };

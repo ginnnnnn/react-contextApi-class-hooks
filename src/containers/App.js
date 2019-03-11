@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import classes from "./App.css";
 import Cockpit from "../components/Cockpit/Cockpit";
 import Persons from "../components/Persons/Persons";
+import AuthContext from "../context/auth-context";
 
 class App extends Component {
   constructor(props) {
@@ -25,7 +26,9 @@ class App extends Component {
       { name: "Boston", age: "23", id: "aq4" }
     ],
     showCards: false,
-    showCockpit: true
+    showCockpit: true,
+    stateCounter: 0,
+    isAuthenticated: false
   };
 
   static getDerivedStateFromProps(props, state) {
@@ -52,11 +55,22 @@ class App extends Component {
     });
     const updatePersons = [...this.state.persons];
     updatePersons[targetIndex].name = event.target.value;
-    this.setState({ persons: updatePersons });
+    this.setState((prevState, props) => {
+      return {
+        persons: updatePersons,
+        stateCounter: prevState.stateCounter + 1
+      };
+    }); //best way of changine state by the prevState
   };
 
   showCardsHandler = () => {
     this.setState({ showCards: !this.state.showCards });
+  };
+
+  loginHandler = () => {
+    this.setState((prevState, props) => {
+      return { isAuthenticated: !prevState.isAuthenticated };
+    });
   };
 
   deleteCardsHandler = index => {
@@ -91,16 +105,24 @@ class App extends Component {
         >
           {this.state.showCockpit === true ? "Remove Cockpit" : "Show Cockpit"}
         </button>
-        {this.state.showCockpit === true ? (
-          <Cockpit
-            showCards={this.state.showCards}
-            appTitle={this.props.title}
-            clicked={this.showCardsHandler}
-            length={this.state.persons.length}
-          />
-        ) : null}
+        <AuthContext.Provider
+          value={{
+            authenticated: this.state.isAuthenticated,
+            login: this.loginHandler
+          }}
+        >
+          {this.state.showCockpit === true ? (
+            <Cockpit
+              isAuthed={this.state.isAuthenticated}
+              showCards={this.state.showCards}
+              appTitle={this.props.title}
+              clicked={this.showCardsHandler}
+              length={this.state.persons.length}
+            />
+          ) : null}
 
-        {persons}
+          {persons}
+        </AuthContext.Provider>
       </div>
     );
   }
